@@ -248,4 +248,5 @@ if __name__ == "__main__":
     app = App(root)
     root.geometry('600x700+0+0')
     root.configure(bg="#ECEEEF")
+    # print(sys.argv)
     root.mainloop()
