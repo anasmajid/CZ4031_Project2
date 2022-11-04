@@ -77,23 +77,23 @@ class App(object):
         self.inputQueryText.grid(row=5,column=0,padx=20,pady=10,columnspan=6,rowspan = 2)
 
        
-        #Annotate Button to get plan
-        annotateButton = tk.Button(root, 
-                   text="Annotate Query", font = ("bold",12), 
-                   command=self.annotateQuery, borderwidth = 0, bg="#96AB9C", fg="white", height = 2, width=26)
-        annotateButton.grid(row=7,column=0,sticky=W,padx=20, pady =8, columnspan=2)
+        # #Annotate Button to get plan
+        # annotateButton = tk.Button(root, 
+        #            text="Annotate Query", font = ("bold",12), 
+        #            command=self.annotateQuery, borderwidth = 0, bg="#96AB9C", fg="white", height = 2, width=26)
+        # annotateButton.grid(row=7,column=0,sticky=W,padx=20, pady =8, columnspan=2)
         
         #clearButton for clearing input textbox
         clearButton = tk.Button(root, 
                    text="Clear Input", font = ("bold",12), 
                    command=self.clearInput, borderwidth = 0, bg="#96AB9C", fg="white", height = 2, width=26)
-        clearButton.grid(row=7,column=2,sticky=W,padx=20, pady=8, columnspan=2)
+        clearButton.grid(row=7,column=0,sticky=W,padx=20, pady=8, columnspan=2)
 
         #execute Button to get plan
         executeButton = tk.Button(root, 
                    text="Get Plan", font = ("bold",12), 
-                   command=self.getPlan, borderwidth = 0, bg="#96AB9C", fg="white", height = 2, width=58)
-        executeButton.grid(row=8,column=0,sticky=W,padx=20, pady =8, columnspan=4)
+                   command=self.getPlan, borderwidth = 0, bg="#96AB9C", fg="white", height = 2, width=26)
+        executeButton.grid(row=7,column=2,sticky=W,padx=20, pady =8, columnspan=2)
         
         
 
@@ -121,18 +121,24 @@ class App(object):
         updateOutputButton.grid(row=1,column=8,sticky=W,padx=20, columnspan=1)
 
         #output plan on textbox
-        title_label_c = tk.Label(root, text="QUERY PLAN",fg = "black",bg= "#ECEEEF",font= ("Helvetica",12, "bold"))
-        title_label_c.grid(row=2, column=6, columnspan=1, pady =10,padx=10)
+        title_label_c = tk.Label(root, text="QUERY EXECUTION PLAN",fg = "black",bg= "#ECEEEF",font= ("Helvetica",12, "bold"))
+        title_label_c.grid(row=2, column=6, columnspan=2, pady =10)
 
-        self.outputQueryText = tk.Text(root, width=45, height=26,padx=20)
-        self.outputQueryText.grid(row=3,column=6,padx=20,columnspan=3,rowspan = 5)
+        self.outputQueryText = tk.Text(root, width=52, height=23,padx=20)
+        self.outputQueryText.grid(row=3,column=6,padx=10,columnspan=4,rowspan = 4)
 
         #Button to display query tree
         queryTreeButton = tk.Button(root, 
                    text="Show Query Tree", font = ("bold",12), 
-                   command=self.getQueryTree, borderwidth = 0, bg="#96AB9C", fg="white", height = 2, width=44)
-        queryTreeButton.grid(row=8,column=4,sticky=W,padx=20, pady=8, columnspan=5)
+                   command=self.getQueryTree, borderwidth = 0, bg="#96AB9C", fg="white", height = 2, width=22)
+        queryTreeButton.grid(row=7,column=6,sticky=W,padx=26, pady=8, columnspan=2)
 
+        #Annotate Button to get plan
+        annotateButton = tk.Button(root, 
+                   text="Annotate Query", font = ("bold",12), 
+                   command=self.annotateQuery, borderwidth = 0, bg="#96AB9C", fg="white", height = 2, width=22)
+        annotateButton.grid(row=7,column=8,sticky=W, padx=26, pady =8, columnspan=2)
+        
 
 
     #function to connect to db
@@ -220,5 +226,5 @@ if __name__ == "__main__":
 
     root = tk.Tk()
     app = App(root)
-    root.geometry('1020x650+0+0')
+    root.geometry('1080x620+0+0')
     root.mainloop()
