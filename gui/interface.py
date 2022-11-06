@@ -18,7 +18,7 @@ class App(object):
     def __init__(self,parent):
         self.root = parent
         self.root.title("Query Plan Analyser")
-        self.currentQueryPlans = []
+        self.currentQueryPlans = [] #store state of query plans retrieved from backend
 
         title_label_1 = tk.Label(root, 
 		 text="CONNECTION",
@@ -167,7 +167,6 @@ class App(object):
         self.outputQueryText.delete('1.0', END)
         self.outputQueryText.insert(tk.END,self.currentQueryPlans[0])
 
-
     def annotateQuery(self):
         if (self.currentQueryPlans!=[]):
             new_window = tk.Toplevel()
@@ -201,8 +200,6 @@ class App(object):
     #     connection.close()
     #     return result
 
-
-
 if __name__ == "__main__":
     
     # parser = argparse.ArgumentParser()
@@ -217,7 +214,6 @@ if __name__ == "__main__":
     # database = args.database
     # user = args.user
     # password = args.password
-
 
     root = tk.Tk()
     app = App(root)
