@@ -7,8 +7,10 @@ from tkinter.ttk import *
 from tkinter.font import Font
 from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
-# from query_description import 
-# from pyconnect import DBConnection
+
+# import relevant files
+import backend
+import test_annotation 
 
 
 class App(object):
@@ -16,6 +18,7 @@ class App(object):
     def __init__(self,parent):
         self.root = parent
         self.root.title("Query Plan Analyser")
+        self.currentQueryPlans = []
 
         title_label_1 = tk.Label(root, 
 		 text="CONNECTION",
@@ -75,13 +78,6 @@ class App(object):
 
         self.inputQueryText = tk.Text(root, width=60, height=15,padx=20,pady=20)
         self.inputQueryText.grid(row=5,column=0,padx=20,pady=10,columnspan=6,rowspan = 2)
-
-       
-        # #Annotate Button to get plan
-        # annotateButton = tk.Button(root, 
-        #            text="Annotate Query", font = ("bold",12), 
-        #            command=self.annotateQuery, borderwidth = 0, bg="#96AB9C", fg="white", height = 2, width=26)
-        # annotateButton.grid(row=7,column=0,sticky=W,padx=20, pady =8, columnspan=2)
         
         #clearButton for clearing input textbox
         clearButton = tk.Button(root, 
@@ -94,7 +90,6 @@ class App(object):
                    text="Get Plan", font = ("bold",12), 
                    command=self.getPlan, borderwidth = 0, bg="#96AB9C", fg="white", height = 2, width=26)
         executeButton.grid(row=7,column=2,sticky=W,padx=20, pady =8, columnspan=2)
-        
         
 
         # output plans - show output text 
@@ -161,34 +156,35 @@ class App(object):
         print("clearing input")
         self.inputQueryText.delete('1.0', END)
 
-    def annotateQuery(self):
-        print("annotating sql query ")
-        new_window = tk.Toplevel()
-        new_window.geometry('480x500+0+0')
-        new_window.title("Explanations")
-        labelText = tk.Label(master=new_window, text="Explanation on annotated queries", pady=20,font = ("bold",11))
-        labelText.grid(row=0,column=0,padx=20)
-        outputQueryAnnotateText = tk.Text(master= new_window, width=50, height=26,padx=20)
-        outputQueryAnnotateText.grid(row=1, column=0, sticky=W,padx= 20)
-
-        # SAMPLE TEXT FOR ANNOTATION EXPLANATIONS
-        outputQueryAnnotateText.insert(tk.END, "STEP 1: Sequential scan from customers table \nSTEP 2: Index Scan from food table \nSTEP 3: Hash index join on attribute orderID")
-
-        
-
-
     def getPlan(self):
         print("getting plan")
-
         # send sql query plan to BE
-        print("Sql query: ",self.inputQueryText.get('1.0',END))
+        inputSql = self.inputQueryText.get('1.0',END)
+        outputQueryPlan = backend.getQueryPlan(inputSql)
 
-        # display QEP plan retrived and show on output textbox
+        #storing queryplan from be into a state variable
+        self.currentQueryPlans = outputQueryPlan 
         self.outputQueryText.delete('1.0', END)
+        self.outputQueryText.insert(tk.END,self.currentQueryPlans[0])
 
-        # SAMPLE TEXT FOR OUTPUT QEP
-        self.outputQueryText.insert(tk.END, "STEP 1: Sequential scan from customers table \nSTEP 2: Index Scan from food table \nSTEP 3: Hash index join on attribute orderID")
-        
+
+    def annotateQuery(self):
+        if (self.currentQueryPlans!=[]):
+            new_window = tk.Toplevel()
+            new_window.geometry('550x550+0+0')
+            new_window.title("Explanations")
+            labelText = tk.Label(master=new_window, text="Explanation on annotated queries", pady=20,font = ("bold",11))
+            labelText.grid(row=0,column=0,padx=20)
+            outputQueryAnnotateText = tk.Text(master= new_window, width=58, height=26,padx=20)
+            outputQueryAnnotateText.grid(row=1, column=0, sticky=W,padx= 20)
+
+            # Obtain annotated explanations by passing in the currentQueryplan
+            annotation = test_annotation.Annotation()
+            annotatedExplanation = annotation.getAnnotatedExplanations(self.currentQueryPlans[0])
+            outputQueryAnnotateText.insert(tk.END, annotatedExplanation)
+        else:
+            tk.messagebox.showwarning(message="You have not executed any sql inputs!")
+
 
     def updateOutputPlan(self):
         print("updating output plan")
@@ -196,7 +192,6 @@ class App(object):
 
     def getQueryTree(self):
         print("showing query tree plan on new window")
-
 
 
     # def get_query_result(self, query):
