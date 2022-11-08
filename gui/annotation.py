@@ -1,103 +1,91 @@
 
+# formatting/highlighting string
+class color:
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   YELLOW = '\033[93m'
+   END = '\033[0m'
 
-def make_bold(string):
-    boldString = FontFormat.BOLD_START + string + FontFormat.BOLD_END
-    return boldString
+# utility functions to annotate explanations
 
+def make_bold(string): 
+    boldString = color.BOLD + string + color.END
+    return string
 
-# def append_annotation(query_plan, comparison):
+def find_between( s, first, last ):
+    try:
+        start = s.index( first ) + len( first )
+        end = s.index( last, start )
+        return s[start:end]
+    except ValueError:
+        return ""
 
-# def func_scan_annotation(query_plan, comparison):
+def seq_scan_annotate(step):
+    bold_operator = make_bold("Sequential Scan")
+    
+    #obtain relation names
+    relation = "relation"
+    splitStep = step.split()
+    for i in range(len(splitStep)):
+        if (splitStep[i] == "on"):
+            relation = splitStep[i+1]
+    
+    return f"{bold_operator} on {relation} is faster due to much lower selectivity of the predicate"
+
+def index_scan_annotate(step):
+    bold_operator = make_bold("Index Scan")
+    
+    #obtain relation names
+    relation = "relation"
+    splitStep = step.split()
+    for i in range(len(splitStep)):
+        if (splitStep[i] == "on"):
+            relation = splitStep[i+1]
+    return f"{bold_operator} on {relation} is faster due to much high selectivity of the predicate"
+
+def hash_join_annotate(step):
+    bold_operator = make_bold("Hash Join")
+    #obtain relation names
+    relation = "relation"
+    relation_condition = find_between(step,"Hash Cond: (",")")
+    if ( relation_condition != "" ):
+        relation = relation_condition
+    return f"{bold_operator} on {relation} is efficient for processing large, unsorted and non-indexed \
+inputs compared to the other join types. In this query,it has better performance when doing equality join"
+
+def nested_loop_annotate(step):
+    bold_operator = make_bold("Nested Loop")
+    return f"{bold_operator} join is particularly effective if the outer input is small\
+and the inner input is sorted and large"
+
+def merge_join_annotate(step):
+    bold_operator = make_bold("Merge Join")
+    return f"{bold_operator} is particularly effective when the joined tables are sorted on the join columns."
+
    
-# def limit_annotation(query_plan, comparison):
-   
-# def subquery_scan_annotation(query_plan, comparison):
-  
-# def value_scan_annotation(query_plan, comparison):
-  
+class Annotation():
 
-# def materialize_annotation(query_plan, comparison):
-   
-def nl_join_annotation(operand1,operand2):
-    return f"Nested loop join between {operand1} and {operand2} is ideal when one join input is smaller and the other join input is large and indexed on its join columns."
-   
+    dictionary = {
+        "Nested Loop": nested_loop_annotate,
+        "Seq Scan": seq_scan_annotate,
+        "Hash Join": hash_join_annotate,
+        "Index Scan": index_scan_annotate,
+        "Merge Join": merge_join_annotate,
+    }
 
-# def unique_annotation(query_plan, comparison):
-  
-
-# def hash_func_annotation(query_plan, comparison):
-  
-# def gather_merge_annotation(query_plan, comparison):
-   
-
-# def aggregate_annotation(query_plan, comparison):
-
-
-# def cte_scan_annotation(query_plan, comparison):
-
-
-# def group_annotation(query_plan, comparison):
-
-
-# def index_scan_annotation(query_plan, comparison):
-
-
-# def index_only_scan_annotation(query_plan, comparison):
-
-
-# def merge_join_annotation(query_plan, comparison):
-
-
-# def set_operation_annotation(query_plan, comparison):
-
-
-def sequential_scan_annotation(operand1):
-    return f"Seq scan on {operand1} is faster due to low selectivity of predicate"
-
-
-# def sort_annotation(query_plan, comparison):
-   
-
-def hash_join_annotation(operand1, operand2):
-        return f"Hash join on {operand1,operand2} is efficient for processing large, unsorted and non-indexed inputs compared to other join types. In this query,it has better performance when doing equality join"
-
- 
-dictionary = {
-    "Aggregate": aggregate_annotation,
-    "Append": append_annotation,
-    "CTE Scan": cte_scan_annotation,
-    "Function Scan": func_scan_annotation,
-    "Group": group_annotation,
-    "Index Scan": index_scan_annotation,
-    "Index Only Scan": index_only_scan_annotation,
-    "Limit": limit_annotation,
-    "Materialize": materialize_annotation,
-    "Unique": unique_annotation,
-    "Merge Join": merge_join_annotation,
-    "SetOp": set_operation_annotation,
-    "Subquery Scan": subquery_scan_annotation,
-    "Values Scan": value_scan_annotation,
-    "Nested Loop": nl_join_annotation,
-    "Seq Scan": sequential_scan_annotation,
-    "Sort": sort_annotation,
-    "Hash": hash_func_annotation,
-    "Hash Join": hash_join_annotation,
-    "Gather Merge": gather_merge_annotation,
-}
-
-keys = list(dictionary.keys())
-strings = ["Nested Loop between customers and table.", "Seq Scan across Orders.", "Hash Join on places and transactions"]
-counter = 0
-for string_test in strings:
-    counter+=1
-    for i in keys:
-        if str(i) in string_test:
-            if (i == "Nested Loop" ):
-                result = dictionary[i]("company","orders")
-                print(counter,".", result)
-            if (i == "Seq Scan" ):
-                result = dictionary[i]("Orders")
-                print(counter, ".", result)
-            if (i == "Hash Join"):
-                result = dictionary[i]("places","transactions")
-                print(counter, ".", result)
+    def getAnnotatedExplanations(self,queryPlan):
+        print("\nANNOTATED EXPLANATIONS\n")
+        explanation = ""
+        operators = list(self.dictionary.keys())
+        splitSteps = queryPlan.split(" -> ")
+        for step in splitSteps:
+            #operators consist of list of keyword operators we are searching for
+            for i in operators:
+                if (i in step): #check if i (eg. hash join) exists as as substring in each step
+                    print(self.dictionary[i](step))
+                    explanation += "\n-> "
+                    explanation += self.dictionary[i](step)
+                    explanation += "\n"
+                    break #since one step an only be made up of one operator, no use to check for the existence of other operators
+        print(explanation)
+        return explanation
