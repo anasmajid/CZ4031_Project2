@@ -9,77 +9,7 @@ def stringOutput(plans):
         res.append(temp)
     return res
 
-# Process step by step
-def processPlanStep(plan):
-    steps = []
-    step_string = ""
-    for line in plan:
-        temp_string = line.replace(" ","")
-        
-        # New step
-        if line.find("->") != -1:
-            steps.append(step_string)
-            step_string = temp_string
-        
-        # Same step
-        else:
-            step_string += temp_string
-    # Final append
-    steps.append(step_string)
-    
-    # Ignore Cost
-    return steps[1:]
 
-# Process level by level
-def processPlanLevel(plan):
-    levels = {0: []}
-    current_key = 0
-    step_string = ""
-    for line in plan:
-        # print(levels)    
-        # print(step_string)
-        # print(current_key)
-        #if line is start of step
-        if line.find("->") != -1:
-            
-            #check if level already exists
-            step_string = step_string.replace(" ","")
-            if current_key in levels: 
-                levels[current_key].append(step_string)
-            else:
-                levels[current_key] = [step_string]
-            
-            #find level for current step
-            count = 0
-            for char in line:
-                if char != "-":
-                    count +=1
-                else:
-                    break
-            current_key = count
-            step_string = line
-        
-        #line is not new step
-        else:
-            step_string += line
-        
-    # final append
-    step_string = step_string.replace(" ","")
-    if current_key in levels: 
-        levels[current_key].append(step_string)
-    else:
-        levels[current_key] = [step_string]
-    
-    #copy dictionary
-    new = {}
-    level = 0
-    for key in levels:
-        new[level] = levels[key]
-        level +=1
-    return new
-
-def processPlanGraph(plan):
-    return
 
 
 # Testing out function
