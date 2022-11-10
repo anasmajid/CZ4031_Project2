@@ -7,7 +7,6 @@ from tkinter.scrolledtext import ScrolledText
 import cv2
 
 # import relevant files
-import backend
 import annotation 
 import preprocessing
 
@@ -147,7 +146,7 @@ class App(object):
                 "password": self.password_entry.get()
             }
             print(dbConfig)
-            if_connect = backend.connect(dbConfig)
+            if_connect = preprocessing.connect(dbConfig)
             if if_connect:
                 messagebox.showinfo(message = "Connected to database!")
             else:
@@ -177,7 +176,7 @@ class App(object):
     
         try: 
             # API 2. Send sql Input to backend and receives a list of query plans, [QEP, AQP]
-            self.rawQueryPlans = backend.getQueryPlan(inputSql) #[[QEP t1, QEP t2..], [AQP]]
+            self.rawQueryPlans = preprocessing.getQueryPlan(inputSql) #[[QEP t1, QEP t2..], [AQP]]
             queryPlans = preprocessing.stringOutput(self.rawQueryPlans) # [QEP, AQP]
             # print("queryPlan: ",queryPlans)
             self.currentQueryPlans = queryPlans  #storing [QEP,AQP] from be into a state variable in interface object

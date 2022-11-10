@@ -1,9 +1,6 @@
 # import relevant modules
 import tkinter as tk
 import interface
-from backend import *
-
-# Establish connection with gui and db
 
 # Initialise GUI interface 
 root = tk.Tk()

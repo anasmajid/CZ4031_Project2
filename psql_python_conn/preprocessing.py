@@ -1,9 +1,84 @@
 import copy
 import scipy.stats as ss
+import psycopg2
 from graphviz import Graph
 from itertools import groupby
 from string import ascii_lowercase as alc
 
+# global variables
+db_cur = None
+db_conn = None
+
+# postgreSQL connection setup
+def connect(params_dict):
+    global db_conn
+    global db_cur
+    print("db_conn is ", db_conn)
+    if db_conn!= None:
+        disconnect(db_conn, db_cur)
+    
+    # params_dict = {'host': 'localhost', 'database': 'TPC-H', 'user': 'postgres', 'password': 'Superlim016'}
+    try:
+        # connect to psql
+        print('Connecting to PostgreSQL...')
+        db_conn = psycopg2.connect(**params_dict)
+		
+        # create cursor
+        db_cur = db_conn.cursor()
+
+        print("Conn is ", db_conn)
+        print("cur is ", db_cur)
+        return True
+       
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        db_conn = None
+        return False
+
+def disconnect(conn, cur):
+    cur.close()
+    if conn is not None:
+        conn.close()
+        print('PostgreSQL connection closed.')
+
+
+# def version(cur):
+#     # display PostgreSQL server version
+#     db_version = cur.fetchone()
+#     print(db_version)
+
+def getQueryPlan(sqlInput):
+    global db_cur
+
+    # print("sqlInput: ", sqlInput)
+    query_statements = processQuery(sqlInput)
+    output = []
+    for query in query_statements:
+        # execute statement
+        try:
+            db_cur.execute(query)
+        except Exception as e:
+            print(e)
+            return e
+        # get output from query
+        try:
+            output.append(db_cur.fetchall())
+        # psycopg2.ProgrammingError occurs when there
+        # is no output from PostgreSQL, 
+        # eg. in the CREATE TABLES case, need to verify with
+        # SELECT table_names as next query
+        except psycopg2.ProgrammingError:
+            output.append("query executed, no results to fetch")
+
+    # print("output: ", output)
+    # print()
+    return output
+    # strOutput = preprocessing.stringOutput(output)
+    # # print()
+    # # print("strOutput: ", strOutput)
+    # return strOutput
+
+# process query to have 2 queries with explain analyze
 def processQuery(input):
     x = "explain analyze " + input
     y = """
@@ -20,6 +95,7 @@ def processQuery(input):
     result = [x, y]
     return result
 
+# reformats output from list list tuple to list list string
 def stringOutput(plans): 
     res = [] 
     # print("plans: ", plans)
