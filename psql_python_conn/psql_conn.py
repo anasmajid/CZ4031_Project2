@@ -18,16 +18,18 @@ def config(filename='D:\witeo\Documents\Computer Science\CZ 4031 Database System
     return db
 
 
-def connect():
+def connect(params_dict):
     conn = None
+    
+    params_dict = {'host': 'localhost', 'database': 'TPC-H', 'user': 'postgres', 'password': 'Superlim016'}
     try:
         # read config file (database.ini)
-        print("Reading config file")
-        params = config()
+        # print("Reading config file")
+        # params = config()
 
         # connect to psql
         print('Connecting to PostgreSQL...')
-        conn = psycopg2.connect(**params)
+        conn = psycopg2.connect(**params_dict)
 		
         # create cursor
         cur = conn.cursor()
@@ -89,7 +91,8 @@ def run_query(cur, query_statements):
 
 if __name__ == '__main__':
     # connect function - calls connect() and config()
-    db_conn, db_cur = connect()
+    dbConfig = {'host': 'localhost', 'database': 'postgres', 'user': 'postgres', 'password': 'postgres'}
+    db_conn, db_cur = connect(dbConfig)
 
     # '''Sample Queries'''
 
