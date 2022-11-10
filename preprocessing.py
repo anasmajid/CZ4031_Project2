@@ -97,10 +97,27 @@ def draw(choice, q1_dict, q2_dict):
 
 def txt2list(input_path="./query_output.txt"):
     lines = []
+    output_q1 = []
+    output_q2 = []
+    ret = []
     with open(input_path, 'r') as f:
         lines = f.readlines()
+    i = 0
+    while i < len(lines):
+        if lines[i] == "For Query Number 2\n":
+            combine = lines[i]
+            break
+        output_q1.append(lines[i])
+        i+=1
     
-    return lines
+    while i < len(lines):
+        output_q2.append(lines[i])
+        i+=1
+    
+    print("lines")
+    print(output_q2)
+
+    return [output_q1, output_q2]
 
 
 def get_ops_in_order(psql_out):
@@ -108,9 +125,11 @@ def get_ops_in_order(psql_out):
     q1_ops = []
     q2_ops = []
 
-    queries = [list(group) for k, group in groupby(psql_out.copy(), lambda x: x == "For Query Number 2\n") if not k]
-    q1 = queries[0]
-    q2 = queries[1]
+    # queries = [list(group) for k, group in groupby(psql_out.copy(), lambda x: x == "For Query Number 2\n") if not k]
+    # q1 = queries[0]
+    # q2 = queries[1]
+    q1 = psql_out[0]
+    q2 = psql_out[1]
 
     for line in q1:
         if "cost" in line:
