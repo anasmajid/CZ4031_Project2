@@ -4,7 +4,7 @@ from tkinter.ttk import *
 from tkinter.font import Font
 from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
-import cv2
+from PIL import Image
 
 # import relevant files
 import annotation 
@@ -263,21 +263,13 @@ class App(object):
             if (self.clickedPlan.get()=="Alternate Query Plan"):
                 # send command 1 for AQP
                 preprocessing.create_graph(1,self.rawQueryPlans)
-                cv2.namedWindow('query1testaqp.png', cv2.WINDOW_KEEPRATIO)
-                img = cv2.imread('query1testaqp.png')
-
-                cv2.imshow('query1testaqp.png',img)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
+                img = Image.open("query1testaqp.png")
+                img.show()
             else:
                 # send command 0 for QEP tree
                 preprocessing.create_graph(0,self.rawQueryPlans)
-                cv2.namedWindow('query1testqep.png', cv2.WINDOW_KEEPRATIO)
-                img = cv2.imread('query1testqep.png')
-
-                cv2.imshow('query1testqep.png',img)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
+                img = Image.open("query1testqep.png")
+                img.show()
 
 
 
