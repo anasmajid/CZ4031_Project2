@@ -1,3 +1,10 @@
+#
+def stringOutput(plan):
+    res = ""
+    for item in plan:
+        res += plan
+    return res
+
 # Process step by step
 def processPlanStep(plan):
     steps = []
