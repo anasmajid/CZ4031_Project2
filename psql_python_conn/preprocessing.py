@@ -102,7 +102,6 @@ def stringOutput(plans):
         temp = "" 
         for item in plan: 
             item = item[0]
-            print(item)
             temp += item 
         res.append(temp) 
     return res
