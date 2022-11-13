@@ -95,20 +95,15 @@ def processQuery(input):
     result = [x, y]
     return result
 
-# reformats output from list list tuple to list list string
+# reformats output from list list tuple to list string
 def stringOutput(plans): 
     res = [] 
-    # print("plans: ", plans)
     for plan in plans: 
-        # print("plan: ", plan)
         temp = "" 
         for item in plan: 
             item = item[0]
-            print(item)
-            # print("type of item is: ",type(item))
             temp += item 
         res.append(temp) 
-    # print("res: ", res)
     return res
 
 
