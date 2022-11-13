@@ -15,6 +15,13 @@
 1. The entry point for the application is in *project.py*. Run the application using the following command with the dependencies installed:
 > *python project.py*
 
+## Overview of files
+
+- interface.py contains the code for the GUI.
+- annotation.py contains code for generating the annotations
+- preprocessing.py file contains code for reading inputs and other necessry preprocessing.
+- project.py is the main file that invokes the application.
+
 ## Additional Notes
 
 1. The GraphViz library is used to generate a visual flowchart representation of the QEP and the AQP. Functions from this library are called when the "Show Query Tree" button is pressed. The library is not required for any other functionality of our application.
